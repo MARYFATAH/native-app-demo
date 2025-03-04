@@ -1,71 +1,96 @@
-import { useState } from "react";
-import { Text, Button, View, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useState, useEffect } from "react";
 import Animated, {
+  useAnimatedStyle,
   useSharedValue,
   withSpring,
-  useAnimatedStyle,
 } from "react-native-reanimated";
 
-export default function Animation() {
-  const [count, setCount] = useState(0);
-  const scale = useSharedValue(count);
-  const animatedStyles = useAnimatedStyle(() => ({
-    width: `${scale.value * 100}%`,
-  }));
+export default function Progress() {
+  const [progress, setProgress] = useState(0);
+  const animatedProgress = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: `${animatedProgress.value}%`,
+    };
+  });
+
+  useEffect(() => {
+    animatedProgress.value = withSpring(progress);
+  }, [progress]);
+
   return (
-    <View style={styles.container}>
-      <View style={[styles.progressContainer]}>
-        <Animated.View style={[styles.progress, animatedStyles]} />
-        <Text>{count}%</Text>
+    <View style={styles.contentContainer}>
+      <View style={styles.progressContainer}>
+        <Animated.View style={[styles.progressBar, animatedStyle]} />
+        <Text>{progress}%</Text>
       </View>
-      <Button
+      <Pressable
+        style={({ pressed }) => [styles.button, pressed && styles.buttonActive]}
         onPress={() => {
-          if (count <= 90) {
-            setCount(count + 10);
-            scale.value = withSpring((count + 10) / 100);
+          if (animatedProgress.value <= 90) {
+            setProgress(progress + 10);
           }
         }}
-        title="+10"
-      />
-      <Button
+      >
+        <Text style={styles.buttonText}>+10</Text>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [styles.button, pressed && styles.buttonActive]}
         onPress={() => {
-          if (count >= 10) {
-            setCount(count - 10);
-            scale.value = withSpring((count - 10) / 100);
+          if (animatedProgress.value >= 10) {
+            setProgress(progress - 10);
           }
         }}
-        title="-10"
-      />
+      >
+        <Text style={styles.buttonText}>-10</Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  contentContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    justifyContent: "center",
+    padding: 12,
+    gap: 12,
   },
   progressContainer: {
     position: "relative",
-    borderColor: "black",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 6,
-    width: "100%",
     height: 50,
-    padding: 0,
+    width: "100%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",
   },
-  progress: {
-    width: "100%",
-    backgroundColor: "orange",
-    borderRadius: 6,
+  progressBar: {
     position: "absolute",
+    height: "100%",
     top: 0,
     left: 0,
-    height: "100%",
+    borderRadius: 6,
+    backgroundColor: "green",
+  },
+  button: {
+    backgroundColor: "blue",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    minWidth: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
+  },
+  buttonActive: {
+    backgroundColor: "purple",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 20,
   },
 });
