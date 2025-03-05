@@ -3,6 +3,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function RootLayout() {
   console.log("Layout has been called");
@@ -57,6 +58,15 @@ export default function RootLayout() {
               <Feather name="rotate-ccw" size={size} color={color} />
             ),
             title: "Rotate",
+          }}
+        />
+        <Tabs.Screen
+          name="camera/index"
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome5 name="camera" size={size} color={color} />
+            ),
+            title: "Camera",
           }}
         />
       </Tabs>
